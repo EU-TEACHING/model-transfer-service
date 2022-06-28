@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+  model-transfer-service:
+    image: model-transfer-service
+    container_name: model-transfer-service-edge
+    volumes:
+      - "${FILE_UPLOADS_PATH}:${FILE_UPLOADS_PATH}"
+      - "${FILE_DOWNLOADS_PATH}:${FILE_DOWNLOADS_PATH}"
+    env_file:
+      - .env
