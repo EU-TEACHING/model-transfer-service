@@ -2,21 +2,22 @@ version: '3'
 
 services:
 
-  mts-1:
+  mts-3:
     image: model-transfer-service:v0.1
-    container_name: mts1
+    container_name: mts3
+    restart: always
     volumes:
-      - ./mts1/outgoing:/app/outgoing
-      - ./mts1/incoming:/app/incoming
+      - /app/storage/federated/local/outgoing:/app/outgoing
+      - /app/storage/federated/local/incoming:/app/incoming
     environment:
       - "mts.folders.monitored=/app/outgoing"
       - "mts.folders.downloads=/app/incoming"
-      - "mts.file.sender.id=mts1"
+      - "mts.file.sender.id=mts3"
       - "mts.file.deleteUploads=true"
       - "kafka.bootstrapAddress=mts-kafka:9092"
-      - "kafka.groupId=mts1"
+      - "kafka.groupId=mts3"
       - "kafka.uploadsTopicName=teaching.federated_learning.client_models"
       - "kafka.downloadsTopicName=teaching.federated_learning.aggregated_model"
       - "crypto.algorithm=AES"
-      - "crypto.aes.passwords={mts1: 'McoO!lMcjneowufUF23', cloud: 'IfjcoaO!ICJDMa214'}"
-      - "crypto.aes.salts={mts1: 'dedc782d9130289c', cloud: '6068CCF5E6DFB752'}"
+      - "crypto.aes.passwords={mts3: 'jjioOOCLM932!jOC', cloud: 'IfjcoaO!ICJDMa214'}"
+      - "crypto.aes.salts={mts3: 'CB821D87B807A65A', cloud: '6068CCF5E6DFB752'}"

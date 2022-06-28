@@ -1,0 +1,106 @@
+version: '3'
+
+services:
+
+  mts-1:
+    image: model-transfer-service:v0.1
+    container_name: mts1
+    restart: always
+    volumes:
+      - ./mts1/outgoing:/app/outgoing
+      - ./mts1/incoming:/app/incoming
+    environment:
+      - "mts.folders.monitored=/app/outgoing"
+      - "mts.folders.downloads=/app/incoming"
+      - "mts.file.sender.id=mts1"
+      - "mts.file.deleteUploads=true"
+      - "kafka.bootstrapAddress=mts-kafka:9092"
+      - "kafka.groupId=mts1"
+      - "kafka.uploadsTopicName=teaching.federated_learning.client_models"
+      - "kafka.downloadsTopicName=teaching.federated_learning.aggregated_model"
+      - "crypto.algorithm=AES"
+      - "crypto.aes.passwords={mts1: 'McoO!lMcjneowufUF23', cloud: 'IfjcoaO!ICJDMa214'}"
+      - "crypto.aes.salts={mts1: 'dedc782d9130289c', cloud: '6068CCF5E6DFB752'}"
+
+  mts-2:
+    image: model-transfer-service:v0.1
+    container_name: mts2
+    restart: always
+    volumes:
+      - ./mts2/outgoing:/app/outgoing
+      - ./mts2/incoming:/app/incoming
+    environment:
+      - "mts.folders.monitored=/app/outgoing"
+      - "mts.folders.downloads=/app/incoming"
+      - "mts.file.sender.id=mts2"
+      - "mts.file.deleteUploads=true"
+      - "kafka.bootstrapAddress=mts-kafka:9092"
+      - "kafka.groupId=mts2"
+      - "kafka.uploadsTopicName=teaching.federated_learning.client_models"
+      - "kafka.downloadsTopicName=teaching.federated_learning.aggregated_model"
+      - "crypto.algorithm=AES"
+      - "crypto.aes.passwords={mts2: 'IcjcdMLA23!ICOm2', cloud: 'IfjcoaO!ICJDMa214'}"
+      - "crypto.aes.salts={mts2: '211C0A6AB767F21B', cloud: '6068CCF5E6DFB752'}"
+
+  mts-3:
+    image: model-transfer-service:v0.1
+    container_name: mts3
+    restart: always
+    volumes:
+      - ./mts3/outgoing:/app/outgoing
+      - ./mts3/incoming:/app/incoming
+    environment:
+      - "mts.folders.monitored=/app/outgoing"
+      - "mts.folders.downloads=/app/incoming"
+      - "mts.file.sender.id=mts3"
+      - "mts.file.deleteUploads=true"
+      - "kafka.bootstrapAddress=mts-kafka:9092"
+      - "kafka.groupId=mts3"
+      - "kafka.uploadsTopicName=teaching.federated_learning.client_models"
+      - "kafka.downloadsTopicName=teaching.federated_learning.aggregated_model"
+      - "crypto.algorithm=AES"
+      - "crypto.aes.passwords={mts3: 'jjioOOCLM932!jOC', cloud: 'IfjcoaO!ICJDMa214'}"
+      - "crypto.aes.salts={mts3: 'CB821D87B807A65A', cloud: '6068CCF5E6DFB752'}"
+
+  cloud:
+    image: model-transfer-service:v0.1
+    container_name: mts-cloud
+    restart: always
+    volumes:
+      - ./cloud/outgoing:/app/outgoing
+      - ./cloud/incoming:/app/incoming
+    environment:
+      - "mts.folders.monitored=/app/outgoing"
+      - "mts.folders.downloads=/app/incoming"
+      - "mts.file.sender.id=cloud"
+      - "mts.file.deleteUploads=true"
+      - "kafka.bootstrapAddress=mts-kafka:9092"
+      - "kafka.groupId=cloud"
+      - "kafka.uploadsTopicName=teaching.federated_learning.aggregated_model"
+      - "kafka.downloadsTopicName=teaching.federated_learning.client_models"
+      - "crypto.algorithm=AES"
+      - "crypto.aes.passwords={mts1: 'McoO!lMcjneowufUF23', mts2: 'IcjcdMLA23!ICOm2', mts3: 'jjioOOCLM932!jOC', cloud: 'IfjcoaO!ICJDMa214'}"
+      - "crypto.aes.salts={mts1: 'dedc782d9130289c', mts2: '211C0A6AB767F21B', mts3: 'CB821D87B807A65A', cloud: '6068CCF5E6DFB752'}"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: mts-kafka
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

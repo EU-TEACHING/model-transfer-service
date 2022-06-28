@@ -5,9 +5,10 @@ services:
   mts-1:
     image: model-transfer-service:v0.1
     container_name: mts1
+    restart: always
     volumes:
-      - ./mts1/outgoing:/app/outgoing
-      - ./mts1/incoming:/app/incoming
+      - /app/storage/federated/local/outgoing:/app/outgoing
+      - /app/storage/federated/local/incoming:/app/incoming
     environment:
       - "mts.folders.monitored=/app/outgoing"
       - "mts.folders.downloads=/app/incoming"

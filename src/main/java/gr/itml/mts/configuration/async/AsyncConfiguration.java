@@ -23,8 +23,8 @@ public class AsyncConfiguration implements AsyncConfigurer {
     public Executor getAsyncExecutor() {
         log.debug("Creating Async Task Executor");
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(3);
-        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.setCorePoolSize(10);
+        taskExecutor.setMaxPoolSize(20);
         taskExecutor.setQueueCapacity(1024);
         taskExecutor.setThreadNamePrefix("mts-async-");
         taskExecutor.initialize();
