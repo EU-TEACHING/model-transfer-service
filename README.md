@@ -38,3 +38,37 @@ match a specified Kafka broker and bring up the service.
 
 CAUTION: These passwords are just for demo purposes. Don't use them
 in production.
+
+# Running SFTP mode in host.
+
+For convenience an application-sftp.properties is provided in the `src/main/resources`
+path. You can override application.properties with it before packaging.
+
+The properties can be overriden at runtime using the equivalent environment variables.
+
+You can package the application with:
+
+```
+mvn clean package -DskipTests
+```
+
+This will create a jar file in the target folder. This can be run by:
+
+```
+java -jar <jar_filename>.jar
+```
+
+and can be configured to run as a service in a Linux machine.
+All dependencies are included.
+
+## SFTP mode details
+
+The SFTP mode performs the following actions:
+
+- monitors the `mts.folders.monitored` folder and if files are created
+in it they get transferred to the designated folder
+`mts.sftp.remote.uploads.folder` in the SFTP server.
+- runs a scheduled task every minute to check connectivity and sends
+any cached files in `mts.folders.monitored` that couldn't be sent before.
+- runs a scheduled task every minute to download files from
+`mts.sftp.remote.downloads.folder` in the SFTP server.

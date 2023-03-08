@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+
+  sftp-server:
+    image: atmoz/sftp
+    restart: always
+    volumes:
+      - ./mts-sftp-data:/home/teachingsftp/mts-sftp-data
+      - ./mts-sftp-data:/home/teachingsftp/mts-sftp-data-to-download
+    ports:
+      - "2222:22"
+    command: teachingsftp:Ifjcm9120FF:1001

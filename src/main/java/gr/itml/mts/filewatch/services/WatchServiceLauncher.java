@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
-import gr.itml.mts.kafka.producers.CloudSenderService;
+import gr.itml.mts.core.cloud.CloudSenderService;
 import lombok.extern.slf4j.Slf4j;
 
 @EnableAsync
@@ -27,7 +27,7 @@ public class WatchServiceLauncher {
 
     @Autowired
     WatchService folderWatchService;
-    
+
     @Autowired
     CloudSenderService cloudSenderService;
 
@@ -42,15 +42,15 @@ public class WatchServiceLauncher {
 
     @Async
     @EventListener(ApplicationStartedEvent.class)
-    public void launchUploadsFolderMonitoring(){
+    public void launchUploadsFolderMonitoring() {
         try {
             WatchKey key;
             while ((key = folderWatchService.take()) != null) {
                 for (WatchEvent<?> event : key.pollEvents()) {
                     Path fileName = (Path) event.context();
                     File file = new File(monitoredFolderPath + "/" + fileName.toString());
-                    cloudSenderService.sendFileToCloud(fileSenderId, file);
-                    if (deleteFilesAfterSent){
+                    boolean isSent = cloudSenderService.sendFileToCloud(fileSenderId, file);
+                    if (deleteFilesAfterSent && isSent) {
                         file.delete();
                     }
                 }
@@ -73,5 +73,5 @@ public class WatchServiceLauncher {
             }
         }
     }
-    
+
 }
